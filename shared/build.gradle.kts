@@ -59,7 +59,7 @@ afterEvaluate {
                 from(components["kotlin"])
                 groupId = "com.github.redevrx"
                 artifactId = "rx_connection_change"
-                version = "1.0.0"
+                version = "1.0.2"
             }
         }
     }
