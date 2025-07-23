@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.org.apache.http.client.methods.RequestBuilder.options
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
@@ -5,8 +6,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    id("maven-publish")
 }
+
+group = "io.github.redevrx"
+version = "1.0.0"
 
 kotlin {
     androidTarget {
@@ -49,18 +52,5 @@ android {
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["kotlin"])
-                groupId = "com.github.redevrx"
-                artifactId = "rx_connection_change"
-                version = "1.0.2"
-            }
-        }
     }
 }
