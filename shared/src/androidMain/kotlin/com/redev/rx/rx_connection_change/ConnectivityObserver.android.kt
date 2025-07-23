@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 @Suppress(names = ["EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING"])
 actual class ConnectivityObserver(
-     context: Context,
+    context: Context,
 ) {
     private val connectivityManager: ConnectivityManager =
         context.getSystemService(ConnectivityManager::class.java)

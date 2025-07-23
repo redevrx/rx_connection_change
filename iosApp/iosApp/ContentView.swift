@@ -1,5 +1,6 @@
 import SwiftUI
 import Shared
+import Network
 
 struct ContentView: View {
     @State private var showContent = false
@@ -29,9 +30,19 @@ struct ContentView: View {
         .padding()
         .onAppear {
             let connectivity = ConnectivityObserver()
-            connectivity.internetChange { connected in
-                isConnected = connected.boolValue // ❌ Error!
+            let job = FlowUtilsKt.toFlowX(flow:connectivity.isConnected,scope: nil)
+            job.subscribe { it in
+                if let connected = it as? KotlinBoolean {
+                    isConnected = connected.boolValue
+                } else {
+                    isConnected = false
+                }
+            } onCompletion: { err in
+                print("error: \(err)")
             }
+            
+//            job.cancel()
+        
         }
     }
 }
@@ -41,3 +52,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
