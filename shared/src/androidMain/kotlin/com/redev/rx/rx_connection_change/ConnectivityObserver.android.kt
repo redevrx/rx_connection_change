@@ -1,5 +1,6 @@
 package com.redev.rx.rx_connection_change
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
@@ -19,6 +20,9 @@ actual class ConnectivityObserver(
     actual val isConnected: Flow<Boolean>
         @SuppressLint("MissingPermission")
         get() = callbackFlow {
+            val initialState = getCurrentConnectivityState()
+            trySend(initialState)
+
             val callback = object : ConnectivityManager.NetworkCallback() {
                 override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                     super.onCapabilitiesChanged(network, networkCapabilities)
@@ -43,7 +47,9 @@ actual class ConnectivityObserver(
 
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
-                    trySend(true)
+                    val capabilities = connectivityManager.getNetworkCapabilities(network)
+                    val isValidated = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true
+                    trySend(isValidated)
                 }
             }
 
@@ -53,4 +59,19 @@ actual class ConnectivityObserver(
                 connectivityManager.unregisterNetworkCallback(callback)
             }
         }
+
+
+
+    @SuppressLint("MissingPermission")
+    private fun getCurrentConnectivityState(): Boolean {
+        return try {
+            val activeNetwork = connectivityManager.activeNetwork
+            val networkCapabilities = activeNetwork?.let {
+                connectivityManager.getNetworkCapabilities(it)
+            }
+            networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) == true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }
