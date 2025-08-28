@@ -43,6 +43,7 @@ kotlin {
 android {
     namespace = "com.redev.rx.rx_connection_change"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    ndkVersion = "28.2.13676358"//NDK version r28 and higher compile 16 KB-aligned by default.
 
     defaultConfig {
         applicationId = "com.redev.rx.rx_connection_change"
@@ -51,9 +52,14 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
     buildTypes {
