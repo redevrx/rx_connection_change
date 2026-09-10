@@ -1,48 +1,12 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
 
-kotlin {
-    androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
-    }
-
-    sourceSets {
-
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-        }
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(projects.shared)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
-    }
-}
-
 android {
     namespace = "com.redev.rx.rx_connection_change"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = 37
     ndkVersion = "28.2.13676358"//NDK version r28 and higher compile 16 KB-aligned by default.
 
     defaultConfig {
@@ -53,11 +17,14 @@ android {
         versionName = "1.0"
     }
 
+    buildFeatures {
+        compose = true
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
-
         jniLibs {
             useLegacyPackaging = true
         }
@@ -74,6 +41,19 @@ android {
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
-}
+    implementation(projects.shared)
 
+    implementation(compose.runtime)
+    implementation(compose.foundation)
+    implementation(compose.material3)
+    implementation(compose.ui)
+    implementation(compose.components.uiToolingPreview)
+
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+
+    debugImplementation(compose.uiTooling)
+
+    testImplementation(libs.kotlin.testJunit)
+    testImplementation(libs.junit)
+}
